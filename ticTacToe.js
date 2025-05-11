@@ -14,6 +14,7 @@ let board = [
 
 //NOTE - Step 2: Display Current Board
 
+// function to console.log the updated game board
 function printBoard() {
     console.log("Board:");
     // this loop will run multiple times, once for each row
@@ -30,30 +31,21 @@ function printBoard() {
 //NOTE - Step 3: Handling Player Input
 
 // Prompt the player to input a number between 1 and 9 to choose a position on the board.
-
-// Function to handle the player's move
 function playerMove() {
-
-     // this stores the players chosen position on the grid
+     // variable "move" stores the players chosen position on the grid
     let move; 
-    
     // Loop to keep asking for input until it's given a valid move
     let validMove = false; 
     while (!validMove) {
-
-        // prompt player for a move 
+        // prompt player for a move while 
         move = parseInt(readlineSync.question("Enter a position (1-9)\n[1][2][3]\n[4][5][6]\n[7][8][9]: "));
-
-        // Map player input to row and column. we do this by first subtracting 1
+        // Map player input to row and column/row. we do this by first subtracting 1
         // dividing by 3 gives us the row
         const row = Math.floor((move - 1) / 3);
-
         // The remainder after dividing by 3 is the column position
         const col = (move - 1) % 3;
-
         // Check if the move is between 1 and 9 and the space is empty
         if (move >= 1 && move <= 9 && board[row][col] === ' ') {
-
             // Apply the 'X' to blank space in board array
             board[row][col] = 'X'; 
             validMove = true;
@@ -66,7 +58,58 @@ function playerMove() {
     printBoard();  
 }
 
+//NOTE - Step 3: AI Functionality
+
+function aiMove() {
+    // let row/column is scoped to the aiMove() function
+    let row, column;
+
+    // Check if the center position (5) is available
+    if (board[1][1] === ' ') {
+        row = 1;   // Set row as 1 (middle row)
+        column = 1; // Set column as 1 (middle column)
+    }
+    // Step 2: Check for the first available corner (positions 1, 3, 7, 9)
+    else if (board[0][0] === ' ') {  // Top-left corner
+        row = 0;
+        column = 0;
+    } else if (board[0][2] === ' ') {  // Top-right corner
+        row = 0;
+        column = 2;
+    } else if (board[2][0] === ' ') {  // Bottom-left corner
+        row = 2;
+        column = 0;
+    } else if (board[2][2] === ' ') {  // Bottom-right corner
+        row = 2;
+        column = 2;
+    }
+    // Step 3: If no corners available, take any available edge (positions 2, 4, 6, 8)
+    else {
+        // Start a loop over all rows of the board (r)
+        for (let r = 0; r < 3; r++) {
+            // For each row, start a loop over all columns (c)
+            for (let c = 0; c < 3; c++) {
+                // Check if the spot is empty and is not a corner or center
+                if (board[r][c] === ' ' && (r === 0 || r === 2 || c === 0 || c === 2)) {
+                    // a valid move was found, so we save the row/column
+                    row = r;
+                    column = c;
+                    // then we break inner loop (columns)
+                    break;
+                }
+            }
+            // If a valid move has been found, exit the loop
+            if (row !== undefined && column !== undefined) break;
+        }
+    }
+    // Apply the 'O' to the saved position
+    board[row][column] = 'O';
+    // Display the updated board after AI's move
+    printBoard();
+}
+
+
 
 printBoard();
 playerMove();
-
+aiMove();
