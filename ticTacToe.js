@@ -54,6 +54,8 @@ function playerMove() {
             console.log("Invalid move. Try again.");
         }
     }
+    // clear console of previous round
+    console.clear();
     // Display the updated board
     printBoard();  
 }
@@ -104,6 +106,8 @@ function aiMove() {
     }
     // Apply the 'O' to the saved position
     board[row][column] = 'O';
+    // clear console of previous round
+    console.clear();
     // Display the updated board after AI's move
     printBoard();
 }
@@ -113,10 +117,10 @@ function aiMove() {
 // this function will check if either player has won, when the function is called later it will check if three of the same symbols are in a line.
 function checkWin(symbol) {
     // loop through for each row below 3, then procede to next row
-    for (let i = 0; i > 3; i++) {
+    for (let i = 0; i < 3; i++) {
         // check rows and columns (i) for symbol "X" or "O" return true only when all conditions are met (3 in a line)
-        if (board [i][0] === Symbol && board[i][1] === symbol && board[i][2] === symbol) return true;
-        if (board [0][i] === Symbol && board[1][i] === symbol && board[2][i] === symbol) return true;
+        if (board [i][0] === symbol && board[i][1] === symbol && board[i][2] === symbol) return true;
+        if (board [0][i] === symbol && board[1][i] === symbol && board[2][i] === symbol) return true;
     }
     // Checking Diagonals    
     if (board[0][0] === symbol && board [1][1] === symbol && board [2][2] === symbol) return true;
@@ -141,17 +145,19 @@ function isDraw() {
 //NOTE - Step 6: Game Loop
 
 function playGame() {
-    // reset the board each start of a round
+    // clear console of previous round
+    console.clear();
+    // reset and display the board each start of a round
     board = [
         [' ', ' ',' '], // row 0
         [' ', ' ',' '], // row 1
         [' ', ' ',' '], // row 2
     ];
-
     printBoard();
 
+    // entering an infinite loop until a win or a draw has been identified
     while(true) {
-
+        // after each player move, the checkwin function and the draw function are called
         playerMove();
         if (checkWin("X")) {
             console.log("You Win Hurray! ");
@@ -159,9 +165,11 @@ function playGame() {
         }
         if (isDraw()) {
             console.log("Its a Draw. ");
+            // if either return true, the loop breaks
             break;
         }
-
+        
+        // after each AI move, the checkwin function and the draw function are called
         aiMove();
         if (checkWin("O")) {
             console.log("Naughty Wins, Better Luck Next Time. ");
@@ -169,16 +177,18 @@ function playGame() {
         }
         if (isDraw()) {
             console.log("Its a Draw. ");
+            // if either return true, the loop breaks
             break;
         }
     }
 
-    // Ask to Play Again?
+    // After main loop ends, ask to play again
     const again = readlineSync.question("Would You Like to Play Again? [Y/N] ");
     if (again.toLowerCase() === "y") {
-        // Restart the Game Loop
+        // if "Y" is typed it restarts the playGame function
         playGame();
     } else {
+        // if "N" is typed the game ends
         console.log("Thanks For Playing! ")
     }
 }
