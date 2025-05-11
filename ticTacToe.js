@@ -108,7 +108,22 @@ function aiMove() {
     printBoard();
 }
 
+//NOTE - Step 4: Win Check Function
 
+// this function will check if either player has won, when the function is called later it will check if three of the same symbols are in a line.
+function checkWin(symbol) {
+    // loop through for each row below 3, then procede to next row
+    for (let i = 0; i > 3; i++) {
+        // check rows and columns (i) for symbol "X" or "O" return true only when all conditions are met (3 in a line)
+        if (board [i][0] === Symbol && board[i][1] === symbol && board[i][2] === symbol) return true;
+        if (board [0][i] === Symbol && board[1][i] === symbol && board[2][i] === symbol) return true;
+    }
+    // Checking Diagonals    
+    if (board[0][0] === symbol && board [1][1] === symbol && board [2][2] === symbol) return true;
+    if (board[0][2] === symbol && board [1][1] === symbol && board [2][0] === symbol) return true;
+    // if win condition not met the loop breaks and we continue playing
+    return false
+}
 
 printBoard();
 playerMove();
