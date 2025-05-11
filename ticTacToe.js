@@ -125,6 +125,64 @@ function checkWin(symbol) {
     return false
 }
 
-printBoard();
-playerMove();
-aiMove();
+//NOTE - Step:5 Checking for Draws
+
+// This function will check if the board is full
+function isDraw() {
+    // iterate through every row in board 
+    for (let row of board) {
+        // row contains a space return false
+        if (row.includes(" ")) return false;
+    }
+    // otherwise return true
+    return true
+}
+
+//NOTE - Step 6: Game Loop
+
+function playGame() {
+    // reset the board each start of a round
+    board = [
+        [' ', ' ',' '], // row 0
+        [' ', ' ',' '], // row 1
+        [' ', ' ',' '], // row 2
+    ];
+
+    printBoard();
+
+    while(true) {
+
+        playerMove();
+        if (checkWin("X")) {
+            console.log("You Win Hurray! ");
+            break;
+        }
+        if (isDraw()) {
+            console.log("Its a Draw. ");
+            break;
+        }
+
+        aiMove();
+        if (checkWin("O")) {
+            console.log("Naughty Wins, Better Luck Next Time. ");
+            break;
+        }
+        if (isDraw()) {
+            console.log("Its a Draw. ");
+            break;
+        }
+    }
+
+    // Ask to Play Again?
+    const again = readlineSync.question("Would You Like to Play Again? [Y/N] ");
+    if (again.toLowerCase() === "y") {
+        // Restart the Game Loop
+        playGame();
+    } else {
+        console.log("Thanks For Playing! ")
+    }
+}
+
+// Call playGame function, which in turn calls every other function to create a cohesive tic tac toe game.
+playGame();
+
