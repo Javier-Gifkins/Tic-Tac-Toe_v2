@@ -1,11 +1,10 @@
 //NOTE - Imports:
 const readlineSync = require('readline-sync');
 
-
 //NOTE - Step 1: Board Representation
 
 // a 3x3 array is used to represent the game board. The board array is a 2D array, meaning it's an array that contains other arrays as elements. Each inner array represents a horizontal row on the board.
-//  Each cell will first be empty, and updated with 'X' for the player and 'O' for the AI.
+//  Each cell will first be empty, and updated with 'X' for the player and 'O' for Player 2 or the AI.
 let board = [
     [' ', ' ',' '], // row 0
     [' ', ' ',' '], // row 1
@@ -19,7 +18,7 @@ function printBoard() {
     console.log("Board:");
     // this loop will run multiple times, once for each row
     for (let row of board) {
-        // log the updated row and seperate each item in the 2d array with "|" 
+        // log the updated row and while seperating each item in the 2d array with "|" 
         console.log(row.join(" | "));
         // if row is not last row, print "--+---+--" after
         if (row != board[board.length - 1]) { 
@@ -32,14 +31,15 @@ function printBoard() {
 
 // Player move function
 function playerMove(symbol) {
-    // variable "move" stores the players chosen position on the grid
+    // the variable "move" stores the players chosen position on the grid
     let move; 
-    let validMove = false; 
     // Loop to keep asking for input until it's given a valid move
+    let validMove = false; 
     while (!validMove) {
         // Prompt the player to input a number between 1 and 9 to choose a position on the board.
         move = parseInt(readlineSync.question(`Player ${symbol}, enter a position (1-9)\n[1][2][3]\n[4][5][6]\n[7][8][9]: `));
-        // Map player input to row and column/row. we do this by first subtracting 1. dividing by 3 gives us the row
+        // Map player input to row and column/row. we do this by first subtracting 1 because the actual array goes from 0 to 8. 
+        // dividing by 3 gives us the row
         const row = Math.floor((move - 1) / 3);
         // The remainder after dividing by 3 is the column position
         const col = (move - 1) % 3;
@@ -53,7 +53,7 @@ function playerMove(symbol) {
             console.log("Invalid move. Try again.");
         }
     }
-    // clear console of previous round
+    // clear console of previous round for clarity
     console.clear();
     // Display the updated board
     printBoard();  
@@ -133,13 +133,17 @@ function aiMove() {
 
 // this function will check if either player has won, when the function is called later it will check if three of the same symbols are in a line.
 function checkWin(symbol) {
-    // loop through for each row below 3, then procede to next row
+    // loop through for each row starting at 0 and below 3
     for (let i = 0; i < 3; i++) {
-        // check rows and columns (i) for symbol "X" or "O" return true only when all conditions are met (3 in a line)
+        // i acts as an index when checking rows and columns. In the board, this [i][2] functions like grid coordinates. 'i' is like the Y-axis (row) and 2 is the X-axis (column) 
+
+        // this is checking rows for 3 of the same symbol
         if (board [i][0] === symbol && board[i][1] === symbol && board[i][2] === symbol) return true;
+        // this is checking columns for 3 of the same symbol
         if (board [0][i] === symbol && board[1][i] === symbol && board[2][i] === symbol) return true;
     }
-    // Checking Diagonals    
+    // Checking Diagonals 
+    // the same coordinate logic is used
     if (board[0][0] === symbol && board [1][1] === symbol && board [2][2] === symbol) return true;
     if (board[0][2] === symbol && board [1][1] === symbol && board [2][0] === symbol) return true;
     // if win condition not met the loop breaks and we continue playing
@@ -178,11 +182,11 @@ function playGame() {
     // enter 1 player mode
     if (gameplaymode.toLowerCase() === "n") {
         // 1 player mode confirmation
-        console.log("\nOh thats a shame, dont worry i'll play a game with you =)\n");
+        console.log("Oh thats a shame, dont worry i'll play a game with you =)\n");
         // entering an infinite loop until a win or a draw has been identified
         while(true) {
             // after each player move, the checkwin function and the isdraw function are called
-            playerMove();
+            playerMove("X");
             if (checkWin("X")) {
                 console.log("You Win Hurray! ");
                 break;
@@ -207,7 +211,7 @@ function playGame() {
         }
     } else if (gameplaymode.toLowerCase() === "y") {
     // 2 player mode confirmation
-    console.log("\nThats good news, enjoy your game together <3\n");
+    console.log("Thats good news, enjoy your game together <3\n");
     let currentPlayer = "X"; // Start with Player 1
     while (true) {
         playerMove(currentPlayer); 
