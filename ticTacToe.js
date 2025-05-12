@@ -30,24 +30,23 @@ function printBoard() {
 
 //NOTE - Step 3: Handling Player Input
 
-// Prompt the player to input a number between 1 and 9 to choose a position on the board.
-function playerMove() {
-     // variable "move" stores the players chosen position on the grid
+// Player move function
+function playerMove(symbol) {
+    // variable "move" stores the players chosen position on the grid
     let move; 
-    // Loop to keep asking for input until it's given a valid move
     let validMove = false; 
+    // Loop to keep asking for input until it's given a valid move
     while (!validMove) {
-        // prompt player for a move while 
-        move = parseInt(readlineSync.question("Enter a position (1-9)\n[1][2][3]\n[4][5][6]\n[7][8][9]: "));
-        // Map player input to row and column/row. we do this by first subtracting 1
-        // dividing by 3 gives us the row
+        // Prompt the player to input a number between 1 and 9 to choose a position on the board.
+        move = parseInt(readlineSync.question(`Player ${symbol}, enter a position (1-9)\n[1][2][3]\n[4][5][6]\n[7][8][9]: `));
+        // Map player input to row and column/row. we do this by first subtracting 1. dividing by 3 gives us the row
         const row = Math.floor((move - 1) / 3);
         // The remainder after dividing by 3 is the column position
         const col = (move - 1) % 3;
         // Check if the move is between 1 and 9 and the space is empty
         if (move >= 1 && move <= 9 && board[row][col] === ' ') {
-            // Apply the 'X' to blank space in board array
-            board[row][col] = 'X'; 
+            // Apply the Symbol to blank space in board array
+            board[row][col] = symbol; 
             validMove = true;
         } else {
             // prompt player for another move
@@ -59,6 +58,24 @@ function playerMove() {
     // Display the updated board
     printBoard();  
 }
+
+//function oldPlayerMove() {
+//     let move; 
+//     let validMove = false; 
+//     while (!validMove) {
+//         move = parseInt(readlineSync.question("Enter a position (1-9)\n[1][2][3]\n[4][5][6]\n[7][8][9]: "));
+//         const row = Math.floor((move - 1) / 3);
+//         const col = (move - 1) % 3;
+//         if (move >= 1 && move <= 9 && board[row][col] === ' ') {
+//             board[row][col] = 'X'; 
+//             validMove = true;
+//         } else {
+//             console.log("Invalid move. Try again.");
+//         }
+//     }
+//     console.clear();
+//     printBoard();  
+// }
 
 //NOTE - Step 3: AI Functionality
 
@@ -155,41 +172,66 @@ function playGame() {
     ];
     printBoard();
 
-    // entering an infinite loop until a win or a draw has been identified
-    while(true) {
-        // after each player move, the checkwin function and the draw function are called
-        playerMove();
-        if (checkWin("X")) {
-            console.log("You Win Hurray! ");
+    // a prompt for 1 or 2 player
+    let gameplaymode = (readlineSync.question("\nDo you have any friends to play with? [Y/N]"))
+
+    // enter 1 player mode
+    if (gameplaymode.toLowerCase() === "n") {
+        // 1 player mode confirmation
+        console.log("\nOh thats a shame, dont worry i'll play a game with you =)\n");
+        // entering an infinite loop until a win or a draw has been identified
+        while(true) {
+            // after each player move, the checkwin function and the isdraw function are called
+            playerMove();
+            if (checkWin("X")) {
+                console.log("You Win Hurray! ");
+                break;
+            }
+            if (isDraw()) {
+                console.log("Its a Draw. ");
+                // if either return true, the loop breaks
+                break;
+            }
+            
+            // after each AI move, the checkwin function and the draw function are called
+            aiMove();
+            if (checkWin("O")) {
+                console.log("Naughty Wins, Better Luck Next Time. ");
+                break;
+            }
+            if (isDraw()) {
+                console.log("Its a Draw. ");
+                // if either return true, the loop breaks
+                break;
+            }
+        }
+    } else if (gameplaymode.toLowerCase() === "y") {
+    // 2 player mode confirmation
+    console.log("\nThats good news, enjoy your game together <3\n");
+    let currentPlayer = "X"; // Start with Player 1
+    while (true) {
+        playerMove(currentPlayer); 
+        if (checkWin(currentPlayer)) {
+            console.log(`Player ${currentPlayer} wins!`);
             break;
         }
         if (isDraw()) {
-            console.log("Its a Draw. ");
-            // if either return true, the loop breaks
+            console.log("It's a Draw.");
             break;
         }
-        
-        // after each AI move, the checkwin function and the draw function are called
-        aiMove();
-        if (checkWin("O")) {
-            console.log("Naughty Wins, Better Luck Next Time. ");
-            break;
-        }
-        if (isDraw()) {
-            console.log("Its a Draw. ");
-            // if either return true, the loop breaks
-            break;
-        }
+        // Switch player after every turn
+        currentPlayer = (currentPlayer === "X") ? "O" : "X";
     }
+}
 
     // After main loop ends, ask to play again
-    const again = readlineSync.question("Would You Like to Play Again? [Y/N] ");
+    const again = readlineSync.question("\nWould You Like to Play Again? [Y/N] ");
     if (again.toLowerCase() === "y") {
         // if "Y" is typed it restarts the playGame function
         playGame();
     } else {
         // if "N" is typed the game ends
-        console.log("Thanks For Playing! ")
+        console.log("\nThanks For Playing! ")
     }
 }
 
