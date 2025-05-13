@@ -79,8 +79,9 @@ function playerMove(symbol) {
 
 //NOTE - Step 3: AI Functionality
 
+// AI logic
 function aiMove() {
-    // let row/column is scoped to the aiMove() function
+    // let row/column is scoped to this aiMove() function
     let row, column;
 
     // Check if the center position (5) is available
@@ -102,7 +103,7 @@ function aiMove() {
         row = 2;
         column = 2;
     }
-    // Step 3: If no corners available, take any available edge (positions 2, 4, 6, 8)
+    // Step 3: If no corners available, take any available edge positions (2, 4, 6, 8)
     else {
         // Start a loop over all rows of the board (r)
         for (let r = 0; r < 3; r++) {
@@ -177,7 +178,7 @@ function playGame() {
     printBoard();
 
     // a prompt for 1 or 2 player
-    let gameplaymode = (readlineSync.question("\nDo you have any friends to play with? [Y/N]"))
+    let gameplaymode = (readlineSync.question("\nDo you have any friends to play with? [Y/N] "))
 
     // enter 1 player mode
     if (gameplaymode.toLowerCase() === "n") {
@@ -196,7 +197,6 @@ function playGame() {
                 // if either return true, the loop breaks
                 break;
             }
-            
             // after each AI move, the checkwin function and the draw function are called
             aiMove();
             if (checkWin("O")) {
@@ -210,12 +210,17 @@ function playGame() {
             }
         }
     } else if (gameplaymode.toLowerCase() === "y") {
-    // 2 player mode confirmation
-    console.log("Thats good news, enjoy your game together <3\n");
-    let currentPlayer = "X"; // Start with Player 1
-    while (true) {
+        // 2 player mode confirmation
+        console.log("Thats good news, enjoy your game together <3\n");
+        // variable current player is created & assigned to player 1, it is block scoped
+        let currentPlayer = "X"; // Start with Player 1
+        // entering an infinite loop until a win or a draw has been identified
+        while (true) {
+        // currentPlayer is the parameter being passed to the playerMove function.
         playerMove(currentPlayer); 
+        // currentPlayer is the parameter being passed to the function checkwin.
         if (checkWin(currentPlayer)) {
+            // this is a template string, or template literal, its a formatted string that can convert different different dta types like numbers, booleans, and objects and console log them in their string representation, very cool.
             console.log(`Player ${currentPlayer} wins!`);
             break;
         }
